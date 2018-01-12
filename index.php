@@ -21,6 +21,53 @@
 		.stillingOverskrift {
 			font-weight: bold;
 		}
+
+/*new css*/
+body,html,*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+body{
+    font-family: sans-serif;
+    background-color: rgb(51,51,51);
+    color: white;
+}
+body>p{
+    background-color: black;
+}
+#searchResultStats{
+    border-bottom: 1px solid white;
+}
+#searchResultStats,#searchForm{
+    background-color: rgb(61,61,61);
+    padding: 5px;
+}
+.highlight{
+    background-color: inherit;
+    color: yellow;
+}
+.searchString{
+    font-weight: bold;
+}
+.stillingOverskrift{
+    border-top: 1px dotted white;
+    padding: 5px 10px;
+}
+.statistikkPeriode{
+    color: pink;
+}
+.arbeidssted{
+    text-decoration: underline;
+}
+.stillingTekst{
+    padding: 5px 10px;
+    margin-bottom: 10px;
+}
+a{
+    text-decoration: underline;
+    color: tomato;
+}		
 	</style>
     <body>
         <!--[if lte IE 9]>
@@ -89,7 +136,7 @@ function outputResults(data, year) {
 		$('#searchResults-' + year).append(
 			"<p class=\"stillingOverskrift\" id=\"" 
 			+ stillingsnr + "-overskrift"
-			+ "\"><span title=\"statistikk periode (YYYY MM)\">" 
+			+ "\"><span class=\"statistikkPeriode\" title=\"statistikk periode (YYYY MM)\">" 
 			+ periode
  			+ "</span> — <span title=\"stillingsnummer\">" 
  			+ stillingsnr
@@ -154,7 +201,7 @@ function fetchStillingData(stillingsnummer, year) {
 	var url = "https://hotell.difi.no/api/json/nav/ledige-stillinger/" 
 		+ year 
 		+ "?stillingsnummer=" 
-		+ stillingsnummer;
+		+ stillingsnummer;		
 	$.getJSON( url, function( data ) {
 		var stilling = data.entries[0];
 		$("#" + stilling.stillingsnummer + "-overskrift").append(
@@ -162,7 +209,7 @@ function fetchStillingData(stillingsnummer, year) {
 			+ stilling.stillingstittel
 			+ "</span><br/>\n<span title=\"virksomhet navn\">" 
 			+ stilling.virksomhet_navn
-			+ "</span> — <span title=\"arbeidssted kommune\">"
+			+ "</span> — <span class=\"arbeidssted\" title=\"arbeidssted kommune\">"
 			+ stilling.arbeidssted_kommune
 			+ "</span> — <span title=\"yrke\">"
 			+ stilling.yrke
@@ -205,7 +252,7 @@ $("#searchForm").submit(function(e) {
 // Maks antall viste datasett pr. år
 // Er sett relativt lavt for å ikkje utløyse for mange API-kall
 // Maks er 100 pga. paginering på datahotell-API-et
-var maxNumEntries = 20;
+var maxNumEntries = 24;
 $('.maxNumEntries').html(maxNumEntries);
 
 var yearsToSearch = ["2016", "2015"];
@@ -226,6 +273,8 @@ gtag('event', searchString, {
 searchTexts();
 
         </script>
+
+<p><a href="https://github.com/livarb/stillingstekstar">Kjeldekode</a> er tilgjengeleg på Github.</p>
 
 <p><i>Denne webappen nyttar <a href="https://data.norge.no/organisasjoner/arbeids-og-velferdsetaten-nav">datasett «Utlysningstekster ledige stillinger meldt til NAV» og «Ledige stillinger meldt til NAV»</a> gjort tilgjengeleg av Arbeids- og velferdsetaten (NAV) under lisensen <a href="https://creativecommons.org/licenses/by/4.0/deed.no">CC-BY 4.0</a></i></p>
 

@@ -146,7 +146,7 @@ function outputResults(data, year) {
 			+ "</p>\n\n");
 
 		// Fetch stillingsData
-		console.log(fetchStillingData(entry.stillingsnummer, year));
+		fetchStillingData(entry.stillingsnummer, year);
 
 		counter++;
 		if (counter == maxNumEntries) {
@@ -215,7 +215,6 @@ function fetchStillingData(stillingsnummer, year) {
 			+ stilling.yrke
 			+ "</span>"
 			);
-		console.log(stilling);
 	});	
 }
 
@@ -255,13 +254,31 @@ $("#searchForm").submit(function(e) {
 var maxNumEntries = 24;
 $('.maxNumEntries').html(maxNumEntries);
 
-var yearsToSearch = ["2016", "2015"];
-$('#yearsText').text('(' + yearsToSearch.join(', ') + ')');
+// Hentar liste over år og køyrer resten av scriptet
+var lookupURL = "https://hotell.difi.no/api/jsonp/nav/stillingstekster?callback=?";
 
-// Utfører eksempel-søk.
-// 
-var exampleStrings = ['åpne data', 'informasjonsforvaltning', 'dataforvaltning', 'datadrevet', 'opne data', 'offentlige data'];
-var searchString = exampleStrings[Math.floor(Math.random() * exampleStrings.length)];
+// var yearsToSearch = ["2016", "2015"];
+var yearsToSearch = [];
+var searchString;
+$.getJSON(lookupURL, function( data ) {
+	console.log(data);
+	data.forEach(function (dataset) {
+		var location = dataset.location.split("/");
+		var id = location[2];
+		yearsToSearch.push(id);
+	});
+
+	yearsToSearch.sort((a, b) => a - b);
+	yearsToSearch.reverse();
+
+	$('#yearsText').text('(' + yearsToSearch.join(', ') + ')');
+
+	// Utfører eksempel-søk.
+	var exampleStrings = ['åpne data', 'informasjonsforvaltning', 'dataforvaltning', 'datadrevet', 'opne data', 'offentlige data'];
+	searchString = exampleStrings[Math.floor(Math.random() * exampleStrings.length)];
+
+	searchTexts();
+});
 
 <?php if (defined("ANALYTICS_ID") && (ANALYTICS_ID !== "")) { ?>
 gtag('event', searchString, {
@@ -269,9 +286,6 @@ gtag('event', searchString, {
   //,'event_label': labelName
 });
 <?php } ?>
-
-searchTexts();
-
         </script>
 
 <p><a href="https://github.com/livarb/stillingstekstar">Kjeldekode</a> er tilgjengeleg på Github.</p>

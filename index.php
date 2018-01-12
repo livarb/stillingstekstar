@@ -75,6 +75,7 @@ a{
         <![endif]-->
 
         <p>Viser treff på søkeord «<span class="searchString"></span>» i historiske stillingsutlysingstekstar <span id="yearsText"></span>. Viser maks <span class="maxNumEntries"></span> treff pr. år.</p>
+        <p>Søk er sensitive på små og store bokstavar (gul markering i søkeresultata er ikkje det). Søk gir kun treff på heile ord ("data" gir ikkje treff på "dataforvaltning").</p>
 
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 

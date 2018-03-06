@@ -188,6 +188,8 @@ function searchTexts() {
 function searchFromInput() {
 	searchString = $("#searchString").val();
 
+	window.location.hash = searchString;
+
 	<?php if (defined("ANALYTICS_ID") && (ANALYTICS_ID !== "")) { ?>
 	gtag('event', searchString, {
 	  'event_category': 'search'
@@ -238,6 +240,15 @@ function escapeHtml (string) {
   });
 }
 
+function logSearch(searchString, searchSource) {
+	<?php if (defined("ANALYTICS_ID") && (ANALYTICS_ID !== "")) { ?>
+	gtag('event', searchString, {
+	  'event_category': searchSource
+	  //,'event_label': labelName
+	});
+	<?php } ?>
+}
+
 
 // I siste del under blir script køyrt
 // og globale variablar sett.
@@ -252,7 +263,7 @@ $("#searchForm").submit(function(e) {
 // Maks antall viste datasett pr. år
 // Er sett relativt lavt for å ikkje utløyse for mange API-kall
 // Maks er 100 pga. paginering på datahotell-API-et
-var maxNumEntries = 24;
+var maxNumEntries = 10;
 $('.maxNumEntries').html(maxNumEntries);
 
 // Hentar liste over år og køyrer resten av scriptet
@@ -261,6 +272,7 @@ var lookupURL = "https://hotell.difi.no/api/jsonp/nav/stillingstekster?callback=
 // var yearsToSearch = ["2016", "2015"];
 var yearsToSearch = [];
 var searchString;
+var searchSource;
 $.getJSON(lookupURL, function( data ) {
 	console.log(data);
 	data.forEach(function (dataset) {
@@ -274,19 +286,34 @@ $.getJSON(lookupURL, function( data ) {
 
 	$('#yearsText').text('(' + yearsToSearch.join(', ') + ')');
 
-	// Utfører eksempel-søk.
-	var exampleStrings = ['åpne data', 'informasjonsforvaltning', 'dataforvaltning', 'datadrevet', 'opne data', 'offentlige data'];
-	searchString = exampleStrings[Math.floor(Math.random() * exampleStrings.length)];
+	var hash = location.hash;
+	if (hash) {
+		// Hentar søkestreng frå URL, dersom den finst
+		searchString = escapeHtml(hash.substr(1));
+		searchSource = "searchHash";
+	} else {
+		// Utfører eksempel-søk om ikkje søkestreng er oppgjeven
+		var exampleStrings = ['åpne data', 'informasjonsforvaltning', 'dataforvaltning', 'datadrevet', 'opne data', 'offentlige data'];
+		searchString = exampleStrings[Math.floor(Math.random() * exampleStrings.length)];
+		searchSource = "searchDefault";
+	}
+	logSearch(searchString, searchSource);
 
 	searchTexts();
 });
 
-<?php if (defined("ANALYTICS_ID") && (ANALYTICS_ID !== "")) { ?>
-gtag('event', searchString, {
-  'event_category': 'searchDefault'
-  //,'event_label': labelName
+$(window).on('hashchange', function() {
+	var hashWord = escapeHtml(location.hash.substr(1));
+	if (searchString == hashWord) {
+		// console.log("hash changed - current search");
+	} else {
+		// console.log("hash changed - doing search: " + location.hash);
+		searchString = hashWord;
+		searchSource = "searchHash";
+		searchTexts();
+	}
+	// reactToHash();
 });
-<?php } ?>
         </script>
 
 <p><a href="https://github.com/livarb/stillingstekstar">Kjeldekode</a> er tilgjengeleg på Github.</p>
